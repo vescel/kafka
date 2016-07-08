@@ -1,0 +1,26 @@
+{
+  "consul": "{{ .CONSUL }}:8500",
+  "preStart": ["/opt/kafka/bin/manage.sh", "generateConfig"],
+  "logging": {
+    "level": "DEBUG",
+    "format": "text",
+    "output": "stdout"
+  },
+  "services": [
+    {
+      "name": "kafka",
+      "port": 9092,
+      "health": ["/opt/kafka/bin/manage.sh", "health"],
+      "poll": 10,
+      "ttl": 25
+    }
+  ],
+  "backends": [
+    {
+      "name": "zookeeper",
+      "poll": 3,
+      "onChange": ["/opt/kafka/bin/manage.sh", "reload"]
+    }
+  ],
+  "preStop": ["/opt/kafka/bin/manage.sh", "cleanup"]
+}
